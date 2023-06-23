@@ -1,4 +1,6 @@
 import {greet} from '@/greet'
+import '@/styles/index.scss'
+import './module'
 
 console.log('welcome TS');
 greet('<Max>');

@@ -2,11 +2,12 @@ import  path from 'path';
 import  webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import  CopyPlugin from "copy-webpack-plugin"
+import  MiniCssExtractPlugin from "mini-css-extract-plugin"
 
 const config: webpack.Configuration = {
   context: path.resolve(__dirname, 'src'),
   entry: {
-    main: './index.ts',
+    main: ['@babel/polyfill', './index.ts'],
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -20,6 +21,24 @@ const config: webpack.Configuration = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "sass-loader",
+        ],
+      },
+      {
+        test: /\.m?js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        }
+      }
     ],
   },
   resolve: {
@@ -35,8 +54,11 @@ const config: webpack.Configuration = {
   new webpack.ProgressPlugin(),
   new CopyPlugin({
     patterns: [
-      { from: path.resolve(__dirname, 'src', 'favicon.ico'), to: path.resolve(__dirname, 'dist')},
+      { from: path.resolve(__dirname, 'src', 'assets', 'favicon.ico'), to: path.resolve(__dirname, 'dist')},
     ]
+  }),
+  new MiniCssExtractPlugin({
+   filename: "[name].[contenthash:8].css"
   })
 ],
   devtool: 'inline-source-map',
